@@ -1,16 +1,72 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
-	<link rel="stylesheet" href="styles.css">
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beautiful IMDb Movie Detail</title>
+  <style>
+    /* General page styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
 
+    /* Movie Poster styling */
+    .moviePic {
+      width: 300px; /* Set the width of the movie poster */
+      height: 450px; /* Set the height of the movie poster */
+      opacity: 0.9; /* Slight transparency for a nice effect */
+      border-radius: 10px; /* Rounded corners for a softer look */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Add a shadow around the image */
+      transition: opacity 0.3s ease; /* Smooth opacity transition */
+    }
+
+    .moviePic:hover {
+      opacity: 1; /* Full opacity when the image is hovered */
+    }
+
+    /* Movie Description styling */
+    .movieDetail {
+      position: absolute;
+      top: 60%; /* Center the description vertically */
+      width: 70%; /* Control the width of the description */
+      text-align: center; /* Center-align the text */
+      font-size: 1.2em; /* Set a readable font size */
+      color: #333; /* Dark text color for contrast */
+      background-color: rgba(255, 255, 255, 0.8); /* Slight white background for contrast */
+      padding: 20px;
+      border-radius: 10px; /* Rounded corners for the description box */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Add a shadow around the description */
+      line-height: 1.6; /* Increase line height for readability */
+    }
+
+    /* Add responsiveness for smaller screens */
+    @media (max-width: 768px) {
+      .moviePic {
+        width: 80%; /* Adjust poster width on smaller screens */
+        height: auto;
+      }
+
+      .movieDetail {
+        width: 90%; /* Adjust description width on smaller screens */
+      }
+    }
+  </style>
+</head>
 <body>
-	<!-- the entire body must be written by student -->
-    <script type="text/javascript" src="./script.js">
-</script>
+
+  <!-- Movie Poster -->
+  <img src="data:image/jpeg;base64,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" alt="Movie Poster" class="moviePic">
+
+  <!-- Movie Description -->
+  <p class="movieDetail">
+    This is an amazing movie that takes you on a thrilling adventure through the unknown. Filled with twists and turns, it keeps you at the edge of your seat until the very end. Don't miss out on this cinematic masterpiece!
+  </p>
 
 </body>
-
 </html>
